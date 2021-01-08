@@ -5,12 +5,12 @@ import os
 from notifier import *
 
 # ．，を、。に変換
-def dotComma(text):
+def correct_punctuation(text):
     return re.sub("．", r"。", re.sub("，", r"、", text))
 
 
 # 数字を三桁ごとに区切ってカンマ
-def comma(num):
+def fancy_digits(num):
     beforeCommaNum = num.count(",")
     s = num.split(".")
     ret = re.sub("(\d)(?=(\d\d\d)+(?!\d))", r"\1,", s[0])
@@ -47,7 +47,7 @@ def space(text):
             numPoses = re.finditer("([+-]?(?:\d+\.?\d*|\.\d+))", subText)
             shift = 0  # カンマを置いた回数
             for p in numPoses:  # 三桁ごとにカンマ
-                s, tmpShift = comma(subText[p.span()[0] + shift : p.span()[1] + shift])
+                s, tmpShift = fancy_digits(subText[p.span()[0] + shift : p.span()[1] + shift])
                 subText = (
                     subText[0 : p.span()[0] + shift]
                     + s
@@ -80,7 +80,7 @@ def converter(filename, search):
         for note in notations:
             print(note)
 
-    text = dotComma(text)
+    text = correct_punctuation(text)
     text = space(text)
 
     with open(filename, mode="w") as f:
