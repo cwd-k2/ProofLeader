@@ -28,7 +28,7 @@ if args['--file']:
     readme_dfs.dfs(args['--file'][0], search = args['--search'])
 else:
     readme_dfs.dfs(search = args['--search'])
-    
+
 
 print("\033[32mCHECK!!\033[0m -> https://competent-morse-3888be.netlify.app/")
 

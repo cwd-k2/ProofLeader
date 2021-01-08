@@ -1,11 +1,12 @@
 import pathlib
 import os
-import read_file as File
 import converter
 
 
 def dfs(dir="", search=False):
-    exFiles = File.readFile("./ProofLeader/exclusion_list.csv").split("\n")
+    f = open('./ProofLeader/exclusion_list.csv')
+    exFiles = [line.strip() for line in f.readlines()]
+    f.close()
 
     files = []
 

@@ -1,87 +1,12 @@
 # -*- coding: utf-8 -*-
 import re
 import os
-import read_file as File
 
-class Warnings:
-
-    def __init__(self, path):
-        self.dict = {}
-        self.note = "\033[33mWARNING\033[0m: {}:{}: ({}) => ({})"
-
-        if not os.path.isfile(path):
-            return
-
-        f = open(path)
-
-        for line in f:
-            elems = line.strip().split(',')
-            right = elems.pop(0)
-            for wrong in elems:
-                self.dict[wrong] = right
-
-        f.close()
-
-    def warn(self, text):
-
-        for i, line in enumerate(text.splitlines()):
-
-            for wrong, right in self.dict.items():
-                matched = re.search(wrong, line)
-
-                if matched:
-                    print(self.note.format(line_num, matched.start(), matched.group(), right))
-
-
-
+from notifier import *
 
 # ．，を、。に変換
 def dotComma(text):
     return re.sub("．", r"。", re.sub("，", r"、", text))
-
-
-# word_listを参照して警告
-def word2Word(text, file, search):
-
-    # if not os.path.isfile("./ProofLeader/word_list.csv"):
-    #     return text
-
-    # wordList = File.readFile("./ProofLeader/word_list.csv", True)
-
-    warnings = Warnings('./ProofLeader/word_list.csv')
-    warnings.warn(text)
-
-    # find_listを開く
-    if search:
-        findListPath = "./ProofLeader/find_list.csv"
-        if not os.path.isfile(findListPath):
-            search = False
-        with open(findListPath) as f:
-            findList = [s.strip() for s in f.readlines()]
-
-    textArr = text.splitlines()
-    # wordOut = []
-    findOut = []
-    for i, text in enumerate(textArr):
-
-        #  for li in wordList:  # 文字列警告
-        #      reObj = re.search(li[0], text)
-        #      if reObj:
-        #          wordOut.append([i + 1, reObj.start(), reObj.group(), li[1]])
-
-        if search:  # 文字列探索
-            for li in findList:
-                reObj = re.search(li, text)
-                if reObj:
-                    findOut.append([i + 1, reObj.start(), li])
-
-    #  for c in wordOut:
-    #      print("\033[33mWARNING\033[0m: {}:{}:{}: ({}) => ({})".format(file, c[0], c[1], c[2], c[3]))
-
-    for c in findOut:
-        print("\033[36mFOUND!!\033[0m: {}:{}:{}: ({})".format(file, c[0], c[1], c[2]))
-
-    return "\n".join(textArr)
 
 
 # 数字を三桁ごとに区切ってカンマ
@@ -138,12 +63,25 @@ def space(text):
     return resText
 
 
-def converter(file, search):
-    text = File.readFile(file)
+def converter(filename, search):
+    f = open(filename)
+    text = f.read()
+    f.close()
+
+    notations = []
+    i = Suggestion('./ProofLeader/word_list.csv')
+    notations.extend(i.notate(text))
+
+    w = WordFinder('./ProofLeader/find_list.csv')
+    notations.extend(w.notate(text))
+
+    if len(notations) > 0:
+        print("\033[1m{}\033[0m:".format(filename))
+        for note in notations:
+            print(note)
 
     text = dotComma(text)
     text = space(text)
-    text = word2Word(text, file, search)
 
-    with open(file, mode="w") as f:
+    with open(filename, mode="w") as f:
         f.write(text)
