@@ -11,7 +11,7 @@ class WordFinder:
         if not os.path.isfile(str(path)):
             return
 
-        with open(str(path)) as f:
+        with open(path, mode='r') as f:
             self.list = [line.strip() for line in f.readlines()]
 
     def notate(self, text):

@@ -11,7 +11,7 @@ class Suggestion:
         if not os.path.isfile(str(path)):
             return
 
-        f = open(str(path))
+        f = open(path, mode='r')
 
         for line in f:
             elems = line.strip().split(',')
