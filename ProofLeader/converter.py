@@ -2,8 +2,6 @@
 import re
 import os
 
-from notifier import *
-
 # ．，を、。に変換
 def correct_punctuation(text):
     return re.sub("．", r"。", re.sub("，", r"、", text))
@@ -63,25 +61,8 @@ def space(text):
     return resText
 
 
-def converter(filename, search):
-    f = open(filename)
-    text = f.read()
-    f.close()
-
-    notations = []
-    i = Suggestion('./ProofLeader/word_list.csv')
-    notations.extend(i.notate(text))
-
-    w = WordFinder('./ProofLeader/find_list.csv')
-    notations.extend(w.notate(text))
-
-    if len(notations) > 0:
-        print("\033[1m{}\033[0m:".format(filename))
-        for note in notations:
-            print(note)
-
+def converter(text):
     text = correct_punctuation(text)
     text = space(text)
 
-    with open(filename, mode="w") as f:
-        f.write(text)
+    return text

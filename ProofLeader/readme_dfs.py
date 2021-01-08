@@ -3,7 +3,7 @@ import os
 import converter
 
 
-def dfs(dir="", search=False):
+def dfs(dir=""):
     f = open('./ProofLeader/exclusion_list.csv')
     exFiles = [line.strip() for line in f.readlines()]
     f.close()
@@ -21,8 +21,10 @@ def dfs(dir="", search=False):
     root = "./" + dir
     recursive(pathlib.Path(root))
 
-    for file in files:
-        converter.converter(file, search)
-        print(file + " : \033[32mOK\033[0m")
+    return files
 
-    print("converter : \033[32mALL OK\033[0m")
+    #  for file in files:
+    #      converter.converter(file)
+    #      print(file + " : \033[32mOK\033[0m")
+    #
+    #  print("converter : \033[32mALL OK\033[0m")
