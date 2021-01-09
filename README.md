@@ -12,6 +12,8 @@
 
 ## インストール方法
 
+以下の環境を前提とします.
+
 - python3 (>= 3.2 多分)
 - pip
 - setuptools
@@ -19,10 +21,12 @@
 ### pip を利用する場合
 
 ```sh
-pip install git+https://github.com/cwd-k2/ProofLeader
+python3 -m pip install git+https://github.com/cwd-k2/ProofLeader
 ```
 
 ### npm などを利用する場合
+
+別途 node や npm 等のインストールが必要となります.
 
 ```sh
 # npm を利用する場合
@@ -36,8 +40,9 @@ $ yarn add -D git+https://github.com/cwd-k2/ProofLeader.git
 - 起動コマンド
 
 ```sh
-$ proof_leader     # pip でインストールした場合
-$ npx proof_leader # npm などを利用した場合
+$ python3 -m proof_leader # pip でインストールした場合
+$ npx proof_leader        # npm などを利用した場合
+$ proof_leader            # パスの通ったところにインストールした場合
 ```
 
 - コマンドラインオプション
@@ -56,7 +61,23 @@ optional arguments:
 
 ## 機能
 
-### **文章表現の警告機能(ver 1.4 で書式が変更になりました)**
+### In-Place な校正
+
+デフォルトでは校正の情報を出力します.
+
+```sh
+# 様々な情報が出力される
+$ proof_leader
+```
+
+`-i|--inplace` オプションを利用することで, 校正を即座にファイルに反映させることができます.
+
+```sh
+# 変更点があれば即座にファイルに反映される
+$ proof_leader -i
+```
+
+### 文章表現の警告機能(ver 1.4 で書式が変更になりました)
 
 ターゲットとなるファイルと同じ階層か, それより上の階層に `word_list.csv` ファイルを作り、以下のように記述します。
 
