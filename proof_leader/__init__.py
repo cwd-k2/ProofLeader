@@ -36,7 +36,7 @@ def main():
         sys.exit(0)
 
     if len(args.file) == 0:
-        args.file.append('.')
+        args.file.append(os.getcwd())
 
     if not (home in here.parents or here == home):
         print('Error: this program should be executed under $HOME. exit.', file=sys.stderr)
