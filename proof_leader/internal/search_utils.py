@@ -14,14 +14,15 @@ def search_markdowns(path):
             ex_list = [line.strip() for line in f.readlines()]
 
     def recursive(path):  # dfs
-        for target in path.iterdir():
+        if path.is_file() and path.match("*.md"):
+            if not regex_included(ex_list, str(path)):
+                targets.append(path)
 
-            if target.is_dir() and not regex_included(ex_list, str(target)):
-                recursive(target)
-
-            elif target.is_file() and target.match("*.md"):
+        elif path.is_dir():
+            for target in path.iterdir():
                 if not regex_included(ex_list, str(target)):
-                    targets.append(target)
+                    recursive(target)
+
 
     recursive(path)
 
