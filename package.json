@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "description": "The alternative way to check your markdown files.",
   "bin": {
-    "proof_leader": "bin/proof_leader"
+    "proof_leader": "wrapper"
   },
   "scripts": {
     "preinstall": "pip3 install . -t . --upgrade"

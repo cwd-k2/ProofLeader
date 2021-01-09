@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+
+exec "PYTHONPATH=#{__dir__}:$PYTHONPATH #{__dir__}/bin/proof_leader"
