@@ -6,7 +6,7 @@
     "proof_leader": "bin/proof_leader"
   },
   "scripts": {
-    "preinstall": "pip install . -t . --upgrade"
+    "preinstall": "pip3 install . -t . --upgrade"
   },
   "repository": {
     "type": "git",
