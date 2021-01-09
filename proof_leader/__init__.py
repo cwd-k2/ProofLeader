@@ -10,7 +10,7 @@ from .internal import *
 VERSION = '3.0.0-alpha_cwd-k2'
 
 def main():
-    arg_parser = ArgumentParser()
+    arg_parser = ArgumentParser(prog='proof_leader')
 
     arg_parser.add_argument(
             'file',
