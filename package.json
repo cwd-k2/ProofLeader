@@ -5,9 +5,6 @@
   "bin": {
     "proof_leader": "wrapper"
   },
-  "scripts": {
-    "preinstall": "python3 -m pip install . -t . --upgrade"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cwd-k2/ProofLeader.git"
