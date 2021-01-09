@@ -66,8 +66,7 @@ After2,Before2_1,Before2_2,Before2_3
 After3,Before3_1,Before3_2
 </pre>
 
-すると以下のように Before が文章に入っていた場合 After にした方がいいと警告します。
-出力例は以下のようになります(Web ページ上で文字色黄色は見えにくいので背景色を黒にしています )。
+Before が文章に入っていた場合 After にした方がいいと警告します。
 
 また Before は OR 指定ができます。
 
@@ -75,15 +74,16 @@ After3,Before3_1,Before3_2
 A,(B|C)
 ```
 
-とすると、B または C のとき警告します。
+B または C のとき警告します。
 
 ### 指定文字列の探索
 
 ターゲットとなるファイルと同じ階層か, それより上の階層に `find_list.csv` ファイルを作り、以下のように記述します。
 
 <pre>
-Good
-Bad
+Detect
+Some
+Expressions
 </pre>
 
 これにより, 特定の単語が使用されているファイルを見つけ出すことができます.
@@ -115,19 +115,13 @@ Bad
 指定するファイルと同じ階層か, それより上の階層に `exclusion_list.csv` ファイルを作り、以下のように記述することで校閲対象から除外することができます。
 
 ```
-SampleFolder/ex_list.md
-ProofLeader/README.md
+.*/node_modules/.*
 ```
 
-## 必要なライブラリ及びパッケージ
-
-- Python 3.2 以上 ( 3.6.4 で動作確認済み)
-- pathlib
-- csv
-- os
-- re
+パス名の文字列に対する正規表現のマッチを行います.
 
 ## URL
 
 [original](https://github.com/xryuseix/ProofLeader)
+
 [this version](https://github.com/cwd-k2/ProofLeader)
