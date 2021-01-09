@@ -6,7 +6,7 @@
     "proof_leader": "wrapper"
   },
   "scripts": {
-    "preinstall": "pip3 install . -t . --upgrade"
+    "preinstall": "python3 -m pip install . -t . --upgrade"
   },
   "repository": {
     "type": "git",
