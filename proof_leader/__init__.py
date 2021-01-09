@@ -53,16 +53,16 @@ def main():
             continue
 
         targets = search_markdowns(path)
-        word_list = search_upwards(path, 'word_list.csv')
-        find_list = search_upwards(path, 'find_list.csv')
-
-        suggestion = Suggestion(word_list)
-        wordfinder = WordFinder(find_list)
-
         for t in targets:
             f = open(t, mode='r')
             text = f.read()
             f.close()
+
+            word_list = search_upwards(t, 'word_list.csv')
+            find_list = search_upwards(t, 'find_list.csv')
+
+            suggestion = Suggestion(word_list)
+            wordfinder = WordFinder(find_list)
 
             notations = []
 
