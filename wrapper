@@ -1,3 +1,8 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env python3
+import os
+import sys
 
-exec "PYTHONPATH=#{__dir__}:$PYTHONPATH #{__dir__}/bin/proof_leader #{ARGV.join ' '}"
+here = os.path.dirname(os.path.realpath(__file__))
+command = "PYTHONPATH={}:$PYTHONPATH {}/bin/proof_leader {}".format(here, here, ' '.join(sys.argv[1:]))
+
+os.system(command)
