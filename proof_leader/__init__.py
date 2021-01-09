@@ -70,20 +70,20 @@ def main():
             notations.extend(wordfinder.notate(text))
 
             if len(notations) > 0:
-                print("\033[1m{}\033[0m:".format(t))
+                print("\033[1m{}\033[0m:".format(t), file=sys.stderr)
                 for note in notations:
-                    print(note)
+                    print(note, file=sys.stderr)
 
             converted_text = converter(text)
 
             if args.inplace:
                 with open(t, mode='w') as f:
                     f.write(converted_text)
-                    print("\033[1m{}\033[0m: \033[32mrewritten\033[0m".format(t))
+                    print("\033[1m{}\033[0m: \033[32mrewritten\033[0m".format(t), file=sys.stderr)
 
             elif text != converted_text:
                 print("\033[1m{}\033[0m:".format(t))
                 print(converted_text)
 
-    print("\033[32mCHECK HERE\033[0m -> https://competent-morse-3888be.netlify.app/")
+    print("\033[32mCHECK HERE\033[0m -> https://competent-morse-3888be.netlify.app/", file=sys.stderr)
 
