@@ -1,4 +1,5 @@
 import os
+import re
 
 from pathlib import Path
 
@@ -10,14 +11,14 @@ def search_markdowns(path):
 
     if exclusion_list:
         with open(exclusion_list, mode='r') as f:
-            ex_list = [Path(line.strip()).resolve() for line in f.readlines()]
+            ex_list = [line.strip() for line in f.readlines()]
 
     def recursive(path):  # dfs
         for target in path.iterdir():
             if target.is_dir():
                 recursive(target)
             elif target.is_file() and target.match("*.md"):
-                if not target in ex_list:
+                if not regex_included(ex_list, str(target)):
                     targets.append(target)
 
     recursive(path)
@@ -35,3 +36,9 @@ def search_upwards(path, filename):
         if parent == Path(os.environ['HOME']):
             return None
 
+def regex_included(regex_list, target):
+    for regex in regex_list:
+        if re.match(regex, target):
+            return True
+
+    return False
