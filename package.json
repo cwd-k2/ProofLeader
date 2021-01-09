@@ -1,0 +1,21 @@
+{
+  "name": "@cwd-k2/proof_leader",
+  "version": "3.0.0",
+  "description": "The alternative way to check your markdown files.",
+  "bin": {
+    "proof_leader": "bin/proof_leader"
+  },
+  "scripts": {
+    "preinstall": "pip install . -t . --upgrade"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cwd-k2/ProofLeader.git"
+  },
+  "author": "cwd-k2",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cwd-k2/ProofLeader/issues"
+  },
+  "homepage": "https://github.com/cwd-k2/ProofLeader#readme"
+}

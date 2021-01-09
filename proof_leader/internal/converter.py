@@ -1,54 +1,14 @@
 # -*- coding: utf-8 -*-
 import re
 import os
-import read_file as File
-
 
 # ．，を、。に変換
-def dotComma(text):
-    replacedText = re.sub("，", r"、", text)
-    return re.sub("．", r"。", replacedText)
-
-
-# word_listを参照して警告
-def word2Word(text, file, search):
-    if not os.path.isfile("./ProofLeader/word_list.csv"):
-        return text
-    wordList = File.readFile("./ProofLeader/word_list.csv", True)
-    # find_listを開く
-    if search:
-        findListPath = "./ProofLeader/find_list.csv"
-        if not os.path.isfile(findListPath):
-            search = False
-        with open(findListPath) as f:
-            findList = [s.strip() for s in f.readlines()]
-
-    textArr = text.splitlines()
-    wordOut = []
-    findOut = []
-    for i, text in enumerate(textArr):
-        for li in wordList:  # 文字列警告
-            reObj = re.search(li[0], text)
-            if reObj:
-                wordOut.append([i + 1, reObj.start(), reObj.group(), li[1]])
-        if search:  # 文字列探索
-            for li in findList:
-                reObj = re.search(li, text)
-                if reObj:
-                    findOut.append([i + 1, reObj.start(), li])
-    for c in wordOut:
-        print(
-            "\033[33mWARNING\033[0m: {}:{}:{}: ({}) => ({})".format(
-                file, c[0], c[1], c[2], c[3]
-            )
-        )
-    for c in findOut:
-        print("\033[36mFOUND!!\033[0m: {}:{}:{}: ({})".format(file, c[0], c[1], c[2]))
-    return "\n".join(textArr)
+def correct_punctuation(text):
+    return re.sub("．", r"。", re.sub("，", r"、", text))
 
 
 # 数字を三桁ごとに区切ってカンマ
-def comma(num):
+def fancy_digits(num):
     beforeCommaNum = num.count(",")
     s = num.split(".")
     ret = re.sub("(\d)(?=(\d\d\d)+(?!\d))", r"\1,", s[0])
@@ -85,7 +45,7 @@ def space(text):
             numPoses = re.finditer("([+-]?(?:\d+\.?\d*|\.\d+))", subText)
             shift = 0  # カンマを置いた回数
             for p in numPoses:  # 三桁ごとにカンマ
-                s, tmpShift = comma(subText[p.span()[0] + shift : p.span()[1] + shift])
+                s, tmpShift = fancy_digits(subText[p.span()[0] + shift : p.span()[1] + shift])
                 subText = (
                     subText[0 : p.span()[0] + shift]
                     + s
@@ -101,12 +61,8 @@ def space(text):
     return resText
 
 
-def converter(file, search):
-    text = File.readFile(file)
-
-    text = dotComma(text)
+def converter(text):
+    text = correct_punctuation(text)
     text = space(text)
-    text = word2Word(text, file, search)
 
-    with open(file, mode="w") as f:
-        f.write(text)
+    return text
