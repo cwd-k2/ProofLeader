@@ -11,13 +11,27 @@ def fancy_digits(num):
     numbers_before_comma = num.count(",")
     s = num.split(".")
     ret = re.sub(r"(\d)(?=(\d\d\d)+(?!\d))", r"\1,", s[0])
+
     if len(s) > 1:
         ret += "." + s[1]
+
     return ret, ret.count(",") - numbers_before_comma
 
-
 # 前後に空白を入れる
-def space(text):
+def make_spaces(text):
+    # 数値の前に空白
+    text = re.sub(r"([^\n\d, \.])([+-]?(?:\d+\.?\d*|\.\d+))", r"\1 \2", text)
+    # 数値の後ろに空白
+    text = re.sub(r"([+-]?(?:\d+\.?\d*|\.\d+))([^\n\d, \.])", r"\1 \2", text)
+    # 英字の前に空白
+    text = re.sub(r"([亜-熙ぁ-んァ-ヶ]+)([a-zA-Z])", r"\1 \2", text)
+    # 英字の後ろに空白
+    text = re.sub(r"([a-zA-Z]+)([亜-熙ぁ-んァ-ヶ])", r"\1 \2", text)
+
+    return text
+
+
+def spacer(text):
     res_text = ""
     del_index = [m.span() for m in re.finditer("<pre>|</pre>|```|`|「|」{1}", text)]
     del_index.insert(0, (0, 0))
@@ -31,22 +45,13 @@ def space(text):
             and text[del_index[i][1] - 1] == "「"
             and not re.fullmatch("[^亜-熙ぁ-んァ-ヶ]*", sub_text)
         ):
-            sub_text = re.sub(
-                r"([^\n\d, \.])([+-]?(?:\d+\.?\d*|\.\d+))", r"\1 \2", sub_text
-            )  # 数値の前に空白
-            sub_text = re.sub(
-                r"([+-]?(?:\d+\.?\d*|\.\d+))([^\n\d, \.])", r"\1 \2", sub_text
-            )  # 数値の後ろに空白
-            sub_text = re.sub(
-                r"(\n[a-zA-Z]+)([亜-熙ぁ-んァ-ヶ])", r"\1 \2", sub_text
-            )  # 先頭英字の後ろに空白
-
+            sub_text = make_spaces(sub_text)
             num_poses = re.finditer(r"([+-]?(?:\d+\.?\d*|\.\d+))", sub_text)
 
             shift = 0  # カンマを置いた回数
 
             for p in num_poses:  # 三桁ごとにカンマ
-                s, tmpShift = fancy_digits(
+                s, tmp_shift = fancy_digits(
                     sub_text[p.span()[0] + shift : p.span()[1] + shift]
                 )
                 sub_text = (
@@ -54,7 +59,7 @@ def space(text):
                     + s
                     + sub_text[p.span()[1] + shift :]
                 )
-                shift += tmpShift
+                shift += tmp_shift
 
             if i + 1 < len(del_index):
                 res_text += sub_text + text[del_index[i + 1][0] : del_index[i + 1][1]]
@@ -69,6 +74,6 @@ def space(text):
 
 def converter(text):
     text = correct_punctuation(text)
-    text = space(text)
+    text = spacer(text)
 
     return text
