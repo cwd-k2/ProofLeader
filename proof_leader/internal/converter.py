@@ -8,58 +8,63 @@ def correct_punctuation(text):
 
 # 数字を三桁ごとに区切ってカンマ
 def fancy_digits(num):
-    beforeCommaNum = num.count(",")
+    numbers_before_comma = num.count(",")
     s = num.split(".")
     ret = re.sub(r"(\d)(?=(\d\d\d)+(?!\d))", r"\1,", s[0])
     if len(s) > 1:
         ret += "." + s[1]
-    return ret, ret.count(",") - beforeCommaNum
+    return ret, ret.count(",") - numbers_before_comma
 
 
 # 前後に空白を入れる
 def space(text):
-    resText = ""
-    delIndex = [m.span() for m in re.finditer("<pre>|</pre>|```|`|「|」{1}", text)]
-    delIndex.insert(0, (0, 0))
-    delIndex.append((len(text), len(text)))
+    res_text = ""
+    del_index = [m.span() for m in re.finditer("<pre>|</pre>|```|`|「|」{1}", text)]
+    del_index.insert(0, (0, 0))
+    del_index.append((len(text), len(text)))
 
-    for i in range(len(delIndex) - 1):
-        subText = text[delIndex[i][1] : delIndex[i + 1][0]]
+    for i in range(len(del_index) - 1):
+        sub_text = text[del_index[i][1] : del_index[i + 1][0]]
 
         if i % 2 == 0 or (  # 「英記号列(プログラム)」は除外
-            delIndex[i][1] > 0
-            and text[delIndex[i][1] - 1] == "「"
-            and not re.fullmatch("[^亜-熙ぁ-んァ-ヶ]*", subText)
+            del_index[i][1] > 0
+            and text[del_index[i][1] - 1] == "「"
+            and not re.fullmatch("[^亜-熙ぁ-んァ-ヶ]*", sub_text)
         ):
-            subText = re.sub(
-                r"([^\n\d, \.])([+-]?(?:\d+\.?\d*|\.\d+))", r"\1 \2", subText
+            sub_text = re.sub(
+                r"([^\n\d, \.])([+-]?(?:\d+\.?\d*|\.\d+))", r"\1 \2", sub_text
             )  # 数値の前に空白
-            subText = re.sub(
-                r"([+-]?(?:\d+\.?\d*|\.\d+))([^\n\d, \.])", r"\1 \2", subText
+            sub_text = re.sub(
+                r"([+-]?(?:\d+\.?\d*|\.\d+))([^\n\d, \.])", r"\1 \2", sub_text
             )  # 数値の後ろに空白
-            subText = re.sub(
-                r"(\n[a-zA-Z]+)([亜-熙ぁ-んァ-ヶ])", r"\1 \2", subText
+            sub_text = re.sub(
+                r"(\n[a-zA-Z]+)([亜-熙ぁ-んァ-ヶ])", r"\1 \2", sub_text
             )  # 先頭英字の後ろに空白
 
-            numPoses = re.finditer(r"([+-]?(?:\d+\.?\d*|\.\d+))", subText)
+            num_poses = re.finditer(r"([+-]?(?:\d+\.?\d*|\.\d+))", sub_text)
+
             shift = 0  # カンマを置いた回数
-            for p in numPoses:  # 三桁ごとにカンマ
+
+            for p in num_poses:  # 三桁ごとにカンマ
                 s, tmpShift = fancy_digits(
-                    subText[p.span()[0] + shift : p.span()[1] + shift]
+                    sub_text[p.span()[0] + shift : p.span()[1] + shift]
                 )
-                subText = (
-                    subText[0 : p.span()[0] + shift]
+                sub_text = (
+                    sub_text[0 : p.span()[0] + shift]
                     + s
-                    + subText[p.span()[1] + shift :]
+                    + sub_text[p.span()[1] + shift :]
                 )
                 shift += tmpShift
-            if i + 1 < len(delIndex):
-                resText += subText + text[delIndex[i + 1][0] : delIndex[i + 1][1]]
+
+            if i + 1 < len(del_index):
+                res_text += sub_text + text[del_index[i + 1][0] : del_index[i + 1][1]]
             else:
-                resText += subText
+                res_text += sub_text
+
         else:
-            resText += subText + text[delIndex[i + 1][0] : delIndex[i + 1][1]]
-    return resText
+            res_text += sub_text + text[del_index[i + 1][0] : del_index[i + 1][1]]
+
+    return res_text
 
 
 def converter(text):
