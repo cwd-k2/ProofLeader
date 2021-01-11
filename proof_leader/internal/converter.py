@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-import os
 
 # ．，を、。に変換
 def correct_punctuation(text):
@@ -11,7 +10,7 @@ def correct_punctuation(text):
 def fancy_digits(num):
     beforeCommaNum = num.count(",")
     s = num.split(".")
-    ret = re.sub("(\d)(?=(\d\d\d)+(?!\d))", r"\1,", s[0])
+    ret = re.sub(r"(\d)(?=(\d\d\d)+(?!\d))", r"\1,", s[0])
     if len(s) > 1:
         ret += "." + s[1]
     return ret, ret.count(",") - beforeCommaNum
@@ -21,8 +20,8 @@ def fancy_digits(num):
 def space(text):
     resText = ""
     delIndex = [m.span() for m in re.finditer("<pre>|</pre>|```|`|「|」{1}", text)]
-    delIndex.insert(0, [0, 0])
-    delIndex.append([len(text), len(text)])
+    delIndex.insert(0, (0, 0))
+    delIndex.append((len(text), len(text)))
 
     for i in range(len(delIndex) - 1):
         subText = text[delIndex[i][1] : delIndex[i + 1][0]]
@@ -33,19 +32,21 @@ def space(text):
             and not re.fullmatch("[^亜-熙ぁ-んァ-ヶ]*", subText)
         ):
             subText = re.sub(
-                "([^\n\d, \.])([+-]?(?:\d+\.?\d*|\.\d+))", r"\1 \2", subText
+                r"([^\n\d, \.])([+-]?(?:\d+\.?\d*|\.\d+))", r"\1 \2", subText
             )  # 数値の前に空白
             subText = re.sub(
-                "([+-]?(?:\d+\.?\d*|\.\d+))([^\n\d, \.])", r"\1 \2", subText
+                r"([+-]?(?:\d+\.?\d*|\.\d+))([^\n\d, \.])", r"\1 \2", subText
             )  # 数値の後ろに空白
             subText = re.sub(
-                "(\n[a-zA-Z]+)([亜-熙ぁ-んァ-ヶ])", r"\1 \2", subText
+                r"(\n[a-zA-Z]+)([亜-熙ぁ-んァ-ヶ])", r"\1 \2", subText
             )  # 先頭英字の後ろに空白
 
-            numPoses = re.finditer("([+-]?(?:\d+\.?\d*|\.\d+))", subText)
+            numPoses = re.finditer(r"([+-]?(?:\d+\.?\d*|\.\d+))", subText)
             shift = 0  # カンマを置いた回数
             for p in numPoses:  # 三桁ごとにカンマ
-                s, tmpShift = fancy_digits(subText[p.span()[0] + shift : p.span()[1] + shift])
+                s, tmpShift = fancy_digits(
+                    subText[p.span()[0] + shift : p.span()[1] + shift]
+                )
                 subText = (
                     subText[0 : p.span()[0] + shift]
                     + s

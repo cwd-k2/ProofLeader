@@ -2,16 +2,18 @@
 import re
 import os
 
-class WordFinder:
 
+class WordFinder:
     def __init__(self, path):
         self.list = []
-        self.note = "> \033[1;36mWORD FOUND\033[0m line:{:3d}, col:{:3d}: \033[36m{}\033[0m"
+        self.note = (
+            "> \033[1;36mWORD FOUND\033[0m line:{:3d}, col:{:3d}: \033[36m{}\033[0m"
+        )
 
         if not os.path.isfile(str(path)):
             return
 
-        with open(path, mode='r') as f:
+        with open(path, mode="r") as f:
             self.list = [line.strip() for line in f.readlines()]
 
     def notate(self, text):
@@ -23,8 +25,7 @@ class WordFinder:
                 matched = re.search(word, line)
 
                 if matched:
-                    notations.append(
-                            self.__notate_str(i + 1, matched.start(), word))
+                    notations.append(self.__notate_str(i + 1, matched.start(), word))
 
         return notations
 
