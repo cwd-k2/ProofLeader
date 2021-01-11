@@ -26,6 +26,10 @@ here = Path(os.getcwd())
 args = arg_parser.parse_args()
 
 
+def error(message: str):
+    print(message, file=sys.stderr)
+
+
 def main():
     if args.version:
         print(VERSION)
@@ -35,9 +39,7 @@ def main():
         args.file.append(os.getcwd())
 
     if not (home in here.parents or here == home):
-        print(
-            "Error: this program should be executed under $HOME. exit.", file=sys.stderr
-        )
+        error("Error: this program should be executed under $HOME. exit.")
         sys.exit(1)
 
     for file_or_directory in args.file:
@@ -47,48 +49,42 @@ def main():
 
         path = path.resolve()
         if not (home in path.parents or path == home):
-            print(
-                "Error: specified file(s) should be under $HOME. skip.", file=sys.stderr
-            )
+            error("Error: specified file(s) should be under $HOME. skip.")
             continue
 
         targets = search_markdowns(path)
-        for t in targets:
-            f = open(t, mode="r")
-            text = f.read()
-            f.close()
 
+        for t in targets:
             word_list = search_upwards(t, "word_list.csv")
             find_list = search_upwards(t, "find_list.csv")
 
             suggestion = Suggestion(word_list)
             wordfinder = WordFinder(find_list)
 
+            with open(t, mode="r") as f:
+                text = f.read()
+
             notations = []
 
             notations.extend(suggestion.notate(text))
             notations.extend(wordfinder.notate(text))
 
-            if len(notations) > 0:
-                print("\033[1m{}\033[0m:".format(t), file=sys.stderr)
-                for note in notations:
-                    print(note, file=sys.stderr)
-
             converted_text = converter(text)
 
+            if len(notations) > 0:
+                print("\033[1m{}\033[0m:".format(t), file=sys.stderr)
+
+                for note in notations:
+                    error(note)
+
             if args.inplace:
+
                 with open(t, mode="w") as f:
                     f.write(converted_text)
-                    print(
-                        "\033[1m{}\033[0m: \033[32mrewritten\033[0m".format(t),
-                        file=sys.stderr,
-                    )
+                    error("\033[1m{}\033[0m: \033[32mrewritten\033[0m".format(t))
 
             elif text != converted_text:
                 print("\033[1m{}\033[0m:".format(t))
                 print(converted_text)
 
-    print(
-        "\033[32mCHECK HERE\033[0m -> https://competent-morse-3888be.netlify.app/",
-        file=sys.stderr,
-    )
+    error("\033[32mCHECK HERE\033[0m -> https://competent-morse-3888be.netlify.app/")

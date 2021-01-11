@@ -4,8 +4,8 @@
 
 (変換例)
 
-- `、`は`、`に変換されます。
-- `。`は`。`に変換されます。
+- `，`は`、`に変換されます。
+- `．`は`。`に変換されます。
 - `100111000`は`100,111,000`に変換されます。
 - `abc, def`は変換されません。
 - `aは123です`は`a は 123 です`に変換されます。
@@ -15,10 +15,11 @@
 以下の環境を前提とします.
 
 - python3 (>= 3.2 多分)
-- pip
-- setuptools
 
 ### pip を利用する場合
+
+- pip
+- setuptools
 
 ```sh
 python3 -m pip install git+https://github.com/cwd-k2/ProofLeader
@@ -77,7 +78,7 @@ $ proof_leader
 $ proof_leader -i
 ```
 
-### 文章表現の警告機能(ver 1.4 で書式が変更になりました)
+### 文章表現の警告機能
 
 ターゲットとなるファイルと同じ階層か, それより上の階層に `word_list.csv` ファイルを作り、以下のように記述します。
 
@@ -144,5 +145,3 @@ Expressions
 ## URL
 
 [original](https://github.com/xryuseix/ProofLeader)
-
-[this version](https://github.com/cwd-k2/ProofLeader)
