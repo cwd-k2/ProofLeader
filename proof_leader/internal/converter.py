@@ -3,13 +3,15 @@ import re
 
 # ．，を、。に変換
 def correct_punctuation(text):
-    return re.sub("．", r"。", re.sub("，", r"、", text))
+    text = re.sub("．", r"。", text)
+    text = re.sub("，", r"、", text)
+    return text
 
 
 # 数字を三桁ごとに区切ってカンマ
-def fancy_digits(num):
-    numbers_before_comma = num.count(",")
-    s = num.split(".")
+def fancy_digits(num_str):
+    numbers_before_comma = num_str.count(",")
+    s = num_str.split(".")
     ret = re.sub(r"(\d)(?=(\d\d\d)+(?!\d))", r"\1,", s[0])
 
     if len(s) > 1:
@@ -17,15 +19,16 @@ def fancy_digits(num):
 
     return ret, ret.count(",") - numbers_before_comma
 
+
 # 前後に空白を入れる
 def make_spaces(text):
     # 数値の前に空白
     text = re.sub(r"([^\n\d, \.])([+-]?(?:\d+\.?\d*|\.\d+))", r"\1 \2", text)
     # 数値の後ろに空白
     text = re.sub(r"([+-]?(?:\d+\.?\d*|\.\d+))([^\n\d, \.])", r"\1 \2", text)
-    # 英字の前に空白
+    # 日本語 + 英字の間に空白
     text = re.sub(r"([亜-熙ぁ-んァ-ヶ]+)([a-zA-Z])", r"\1 \2", text)
-    # 英字の後ろに空白
+    # 英字 + 日本語の間に空白
     text = re.sub(r"([a-zA-Z]+)([亜-熙ぁ-んァ-ヶ])", r"\1 \2", text)
 
     return text
@@ -33,11 +36,15 @@ def make_spaces(text):
 
 def spacer(text):
     res_text = ""
+
+    # テキスト変換から除外する箇所の開始, 終了のキーワードかな [(start, end)]
+    # TODO: refactoring
     del_index = [m.span() for m in re.finditer("<pre>|</pre>|```|`|「|」{1}", text)]
     del_index.insert(0, (0, 0))
     del_index.append((len(text), len(text)))
 
     for i in range(len(del_index) - 1):
+        # 除外する箇所の末尾と先頭に挟まれた箇所ってことかな
         sub_text = text[del_index[i][1] : del_index[i + 1][0]]
 
         if i % 2 == 0 or (  # 「英記号列(プログラム)」は除外
@@ -51,14 +58,12 @@ def spacer(text):
             shift = 0  # カンマを置いた回数
 
             for p in num_poses:  # 三桁ごとにカンマ
-                s, tmp_shift = fancy_digits(
-                    sub_text[p.span()[0] + shift : p.span()[1] + shift]
-                )
-                sub_text = (
-                    sub_text[0 : p.span()[0] + shift]
-                    + s
-                    + sub_text[p.span()[1] + shift :]
-                )
+                u, v = p.span()
+
+                s, tmp_shift = fancy_digits(sub_text[u + shift : v + shift])
+
+                sub_text = sub_text[0 : u + shift] + s + sub_text[v + shift :]
+
                 shift += tmp_shift
 
             if i + 1 < len(del_index):
